@@ -1,8 +1,12 @@
+// Pages
+import PageSignals from "@pages/signals/PageSignals"
+
+
 function App() {
 
   return (
     <>
-      Hello world
+      <PageSignals />
     </>
   )
 }
