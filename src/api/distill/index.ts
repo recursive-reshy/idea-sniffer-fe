@@ -1,12 +1,13 @@
 import { baseApi } from '@api/baseApi'
 import { DISTILL_ENDPOINTS } from '@api/apiEndpoints'
 
+// TODO: Add types
 const distillApi = baseApi.injectEndpoints( { 
   endpoints: ( builder ) => ( {
     getSilverSignals: builder.query( {
-      query: ( { provider, minScore } ) => ( {
+      query: ( { provider, minPainScore } ) => ( {
         url: DISTILL_ENDPOINTS.GET_SILVER_RECORDS,
-        params: { provider, minScore }
+        params: { provider, minPainScore }
       } )
     } ),
 
