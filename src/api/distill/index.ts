@@ -7,18 +7,22 @@ interface SilverSignalParams {
   minPainScore?: number
   page?: number
   limit?: number
+  sortBy?: 'painScore'
+  sortOrder?: 'asc' | 'desc'
 }
 
 const distillApi = baseApi.injectEndpoints( {
   endpoints: ( builder ) => ( {
     getSilverSignals: builder.query<PaginatedResponse< SilverSignal >, SilverSignalParams >( {
-      query: ( { provider, minPainScore, page, limit } ) => ( {
+      query: ( { provider, minPainScore, page, limit, sortBy, sortOrder } ) => ( {
         url: DISTILL_ENDPOINTS.GET_SILVER_RECORDS,
-        params: { provider, minPainScore, page, limit }
+        params: { provider, minPainScore, page, limit, sortBy, sortOrder }
       } ),
-      serializeQueryArgs: ( { queryArgs: { provider, minPainScore } } ) => ( {
+      serializeQueryArgs: ( { queryArgs: { provider, minPainScore, sortBy, sortOrder } } ) => ( {
         provider,
-        minPainScore
+        minPainScore,
+        sortBy,
+        sortOrder
       } ),
       merge: ( cache, incoming ) => {
         cache.data.push( ...incoming.data )
