@@ -26,7 +26,9 @@ const distillApi = baseApi.injectEndpoints( {
       } ),
       merge: ( cache, incoming ) => {
         cache.data.push( ...incoming.data )
-        cache.meta = incoming.meta
+        cache.total = incoming.total
+        cache.page = incoming.page
+        cache.totalPages = incoming.totalPages
       },
       forceRefetch: ( { currentArg, previousArg } ) =>
         currentArg?.page !== previousArg?.page
