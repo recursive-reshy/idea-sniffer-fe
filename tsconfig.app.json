@@ -13,7 +13,7 @@
       "@pages/*": [ "./src/pages/*" ],
       "@store/*": [ "./src/store/*" ],
       "@theme/*": [ "./src/theme/*" ],
-      "@types/*": [ "./src/types/*" ],
+      "@app-types/*": [ "./src/types/*" ],
       "@/*": [ "./src/*" ]
     },
 

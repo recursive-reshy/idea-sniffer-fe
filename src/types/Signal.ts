@@ -1,9 +1,9 @@
 export interface SilverSignal {
   // TODO: fill in fields when backend shape is confirmed
-  [key: string]: unknown
+  [ key: string ]: unknown
 }
 
-export interface PaginatedResponse<T> {
+export interface PaginatedResponse< T > {
   data: T[]
   meta: {
     total: number

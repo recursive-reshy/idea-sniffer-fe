@@ -1,6 +1,6 @@
 import { baseApi } from '@api/baseApi'
 import { DISTILL_ENDPOINTS } from '@api/apiEndpoints'
-import type { PaginatedResponse, SilverSignal, DistillResult } from '../../types/signal.types'
+import type { DistillResult, PaginatedResponse, SilverSignal } from '@app-types/Signal'
 
 interface SilverSignalParams {
   provider: string
@@ -11,7 +11,7 @@ interface SilverSignalParams {
 
 const distillApi = baseApi.injectEndpoints( {
   endpoints: ( builder ) => ( {
-    getSilverSignals: builder.query<PaginatedResponse<SilverSignal>, SilverSignalParams>( {
+    getSilverSignals: builder.query<PaginatedResponse< SilverSignal >, SilverSignalParams >( {
       query: ( { provider, minPainScore, page, limit } ) => ( {
         url: DISTILL_ENDPOINTS.GET_SILVER_RECORDS,
         params: { provider, minPainScore, page, limit }
@@ -28,7 +28,7 @@ const distillApi = baseApi.injectEndpoints( {
         currentArg?.page !== previousArg?.page
     } ),
 
-    postDistill: builder.mutation<DistillResult, unknown>( {
+    postDistill: builder.mutation< DistillResult, unknown >( {
       query: ( body ) => ( {
         url: DISTILL_ENDPOINTS.POST_SILVER_RECORDS,
         method: 'POST',
