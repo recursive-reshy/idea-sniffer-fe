@@ -12,16 +12,18 @@ import { useInfiniteScroll } from '@hooks/useInfiniteScroll'
 interface SignalListProps {
   provider: string
   minPainScore?: number
+  sortBy?: 'painScore'
 }
 
 const PAGE_LIMIT = 10
 
-function SignalList( { provider, minPainScore }: SignalListProps ) {
+function SignalList( { provider, minPainScore, sortBy }: SignalListProps ) {
   const [ currentPage, setCurrentPage ] = useState( 1 )
 
   const { data, isLoading, isFetching } = useGetSilverSignalsQuery( {
     provider,
     minPainScore,
+    sortBy,
     page: currentPage,
     limit: PAGE_LIMIT
   } )

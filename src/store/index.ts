@@ -6,5 +6,5 @@ export { selectIsApiLoading, selectThemeMode } from './selectors'
 // Slices
 export { setActiveRunId, setActiveSnapshotId, setRunStatus } from './pipelineSlice'
 export type { RunStatus } from './pipelineSlice'
-export { toggleTheme, setPreFilterMode } from './uiSlice'
-export type { PreFilterMode } from './uiSlice'
+export { toggleTheme, setPreFilterMode, setMinPainScore, setCategory, setMarketSize, setSubreddit, setSortBy } from './uiSlice'
+export type { PreFilterMode, MarketSize } from './uiSlice'

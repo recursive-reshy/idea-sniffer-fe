@@ -11,7 +11,7 @@ function PagePipeline() {
   const [ activeTab, setActiveTab ] = useState( 0 )
   const { data: runsData, refetch: refetchRuns } = useGetRedditRunsQuery( { provider: 'reddit', page: 1, limit: 20 } )
 
-  const TABS = [ 'Run scrape', 'Filter haiku', 'Distill sonnet' ]
+  const TABS = [ 'Run scrape', 'Filter haiku' ]
 
   const completedRuns = ( runsData?.data ?? [] ).filter( ( run ) => run.status == 'COMPLETE' )
 
@@ -28,9 +28,6 @@ function PagePipeline() {
       ) }
       { activeTab == 1 && (
         <FilterTab completedRuns={ completedRuns } />
-      ) }
-      { activeTab == 2 && (
-        <Box>Distill tab — coming soon</Box>
       ) }
     </PageContainer>
   )
