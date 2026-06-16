@@ -59,3 +59,44 @@ export interface OptimisticRun {
   totalSkipped?: number
   elapsed?: string
 }
+
+export type FilterRunStatus = 'PENDING' | 'RUNNING' | 'COMPLETE' | 'FAILED'
+export type PreFilterMode = 'LENIENT' | 'STRICT'
+
+export interface FilterRun {
+  id: string
+  runId: string
+  preFilterMode: PreFilterMode
+  status: FilterRunStatus
+  totalProcessed: number
+  totalPassed: number
+  totalDropped: number
+  totalMalformed: number
+  totalCostUsd: number
+  startedAt: string | null
+  completedAt: string | null
+  createdAt: string
+}
+
+export interface FilterRequest {
+  runId: string
+  filterMode?: PreFilterMode
+}
+
+export interface FilterResult {
+  runId: string
+  stats: {
+    total: number
+    passed: number
+    dropped: number
+    malformed: number
+    totalCostUsd: number
+    haltedEarly: boolean
+  }
+}
+
+export interface GetFilterRunsParams {
+  runId?: string
+  page?: number
+  limit?: number
+}
