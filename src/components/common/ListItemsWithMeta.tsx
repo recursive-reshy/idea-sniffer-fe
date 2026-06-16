@@ -14,7 +14,8 @@ interface ListItemWithMeta {
   primary: string
   tags?: Tag[]
   secondary?: string
-  meta?: string[]  
+  meta?: string[]
+  action?: ReactNode
 }
 
 type Props = {
@@ -26,8 +27,8 @@ function ListItemsWithMeta( { listItems, ...rest }: Props) {
     <List
       { ...rest }
     >
-      { listItems.map( ( { avatar, primary, tags, secondary, meta }, index ) => (
-          <ListItem key={index}>
+      { listItems.map( ( { avatar, primary, tags, secondary, meta, action }, index ) => (
+          <ListItem key={ index } secondaryAction={ action ?? undefined }>
             { avatar && 
               <ListItemAvatar>
                 <Avatar>{ avatar }</Avatar>
