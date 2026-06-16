@@ -1,16 +1,18 @@
 // React
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 // MUI
 import {
-  Alert, Box, Button, FormControl, InputLabel, MenuItem,
-  Select, Stack, ToggleButton, ToggleButtonGroup, Typography
+  Alert, Box, Button, CircularProgress, FormControl, IconButton, InputLabel,
+  MenuItem, Select, Stack, ToggleButton, ToggleButtonGroup, Tooltip, Typography
 } from '@mui/material'
+import { AutoAwesome as AutoAwesomeIcon } from '@mui/icons-material'
 // Components
 import ListItemsWithMeta from '@components/common/ListItemsWithMeta'
 import LoadingLinear from '@components/common/LoadingLinear'
 // API
 import { usePostFilterMutation, useGetFilterRunsQuery } from '@api/filter'
+import { usePostDistillMutation } from '@api/distill'
 // Store
 import { setActiveRunId, setPreFilterMode } from '@store/index'
 import type { RootState, PreFilterMode } from '@store/index'
@@ -43,6 +45,9 @@ function FilterTab( { completedRuns }: FilterTabProps ) {
   const isFormDisabled = shouldPoll
 
   const [ postFilter ] = usePostFilterMutation()
+  const [ postDistill ] = usePostDistillMutation()
+
+  const [ distillingRunIds, setDistillingRunIds ] = useState< Record< string, boolean > >( {} )
 
   // Base query: always active when a run is selected (provides data + refetch)
   const { data: filterRunsData, refetch: refetchFilterRuns } = useGetFilterRunsQuery(
@@ -89,6 +94,7 @@ function FilterTab( { completedRuns }: FilterTabProps ) {
     const tracked = filterRunsData.data.find( ( filterRun ) => filterRun.id == latched ) ?? fresh
 
     if ( !activeFilterRunId ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveFilterRunId( latched )
     }
     setFilterStatus( tracked.status )
@@ -96,7 +102,7 @@ function FilterTab( { completedRuns }: FilterTabProps ) {
     if ( tracked.status == 'COMPLETE' || tracked.status == 'FAILED' ) {
       refetchFilterRuns()
     }
-  }, [ filterRunsData, triggerTime, activeFilterRunId, filterStatus ] )
+  }, [ filterRunsData, triggerTime, activeFilterRunId, filterStatus, refetchFilterRuns ] )
 
   // Derive the tracked run for displaying completion stats
   const displayedTrackedRun = useMemo( () => {
@@ -105,20 +111,51 @@ function FilterTab( { completedRuns }: FilterTabProps ) {
     return filterRunsData.data.find( ( filterRun ) => filterRun.createdAt >= triggerTime ) ?? null
   }, [ triggerTime, activeFilterRunId, filterRunsData ] )
 
-  const filterListItems = useMemo( () => ( filterRunsData?.data ?? [] ).map( ( filterRun ) => ( {
-    primary: `${ filterRun.preFilterMode }  ${ filterRun.totalPassed ?? 0 } passed / ${ filterRun.totalDropped ?? 0 } dropped`,
-    tags: [
-      {
-        label: filterRun.status,
-        color: filterRun.status == 'COMPLETE' ? 'success' :
-               filterRun.status == 'FAILED'   ? 'error'   : 'warning'
-      } as const
-    ],
-    meta: [
-      filterRun.startedAt ?? '',
-      filterRun.totalCostUsd != null ? `$${ filterRun.totalCostUsd.toFixed( 4 ) }` : ''
-    ].filter( Boolean )
-  } ) ), [ filterRunsData ] )
+  const handleDistill = useCallback( async ( runId: string ) => {
+    setDistillingRunIds( ( prev ) => ( { ...prev, [ runId ]: true } ) )
+    try {
+      await postDistill( { runId } ).unwrap()
+    } finally {
+      setDistillingRunIds( ( prev ) => ( { ...prev, [ runId ]: false } ) )
+    }
+  }, [ postDistill ] )
+
+  const filterListItems = useMemo( () => ( filterRunsData?.data ?? [] ).map( ( filterRun ) => {
+    const isComplete = filterRun.status === 'COMPLETE'
+    const isDistilling = distillingRunIds[ filterRun.runId ] === true
+
+    return {
+      primary: `${ filterRun.preFilterMode }  ${ filterRun.totalPassed ?? 0 } passed / ${ filterRun.totalDropped ?? 0 } dropped`,
+      tags: [
+        {
+          label: filterRun.status,
+          color: filterRun.status === 'COMPLETE' ? 'success' :
+                 filterRun.status === 'FAILED'   ? 'error'   : 'warning'
+        } as const
+      ],
+      meta: [
+        filterRun.startedAt ?? '',
+        filterRun.totalCostUsd != null ? `$${ filterRun.totalCostUsd.toFixed( 4 ) }` : ''
+      ].filter( Boolean ),
+      action: isComplete ? (
+        <Tooltip title="Distill with Sonnet">
+          <span>
+            <IconButton
+              onClick={ () => handleDistill( filterRun.runId ) }
+              disabled={ isDistilling }
+              size="small"
+              color="primary"
+            >
+              { isDistilling
+                ? <CircularProgress size={ 18 } />
+                : <AutoAwesomeIcon fontSize="small" />
+              }
+            </IconButton>
+          </span>
+        </Tooltip>
+      ) : undefined
+    }
+  } ), [ filterRunsData, distillingRunIds, handleDistill ] )
 
   return (
     <Box>
