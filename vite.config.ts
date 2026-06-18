@@ -21,5 +21,21 @@ export default defineConfig( {
       '@app-types': path.resolve( __dirname, 'src/types' ),
       '@': path.resolve( __dirname, 'src' )
     }
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: [],
+    coverage: {
+      provider: 'v8',
+      reporter: [ 'text', 'html' ],
+      include: [ 'src/**/*.ts', 'src/**/*.tsx' ],
+      exclude: [
+        'src/main.tsx',
+        'src/**/*.test.ts',
+        'src/**/*.test.tsx',
+        'src/types/**'
+      ]
+    }
   }
 } )
