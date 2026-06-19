@@ -29,8 +29,8 @@ function App() {
       <CssBaseline />
       <BrowserRouter>
         <Box sx={ { display: 'flex', flexDirection: 'column', minHeight: '100vh' } }>
-          <LoadingLinear isLoading={ isLoading } />
           <Navbar />
+          <LoadingLinear isLoading={ isLoading } />
           <Box component="main" sx={ { flex: 1, overflow: 'auto' } }>
             <Routes>
               <Route path="/" element={ <Navigate to="/signals" replace /> } />
